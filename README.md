@@ -17,7 +17,7 @@ A collection of useful Fabric capacity assets.
 
 •	Scale up to F4 between 8:00 am and 4:00 pm
 
-•	Scale down to F2 after 4:00 pm
+•	Scale down to F2 at 4:00 pm
 
 #### Capacity Pause/Resume Logic App
 
