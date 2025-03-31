@@ -1,0 +1,222 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "triggers": {
+            "Recurrence_-_Twice_Daily": {
+                "type": "Recurrence",
+                "recurrence": {
+                    "interval": 1,
+                    "frequency": "Day",
+                    "timeZone": "Eastern Standard Time",
+                    "schedule": {
+                        "hours": [
+                            8,
+                            16
+                        ],
+                        "minutes": [
+                            0
+                        ]
+                    }
+                }
+            }
+        },
+        "actions": {
+            "Condition": {
+                "type": "If",
+                "expression": {
+                    "and": [
+                        {
+                            "greaterOrEquals": [
+                                "@body('Convert_time_zone_to_EST')",
+                                "08:00:00"
+                            ]
+                        },
+                        {
+                            "lessOrEquals": [
+                                "@body('Convert_time_zone_to_EST')",
+                                "16:00:00"
+                            ]
+                        }
+                    ]
+                },
+                "actions": {
+                    "Condition_to_check_if_capacity_is_active_": {
+                        "type": "If",
+                        "expression": {
+                            "and": [
+                                {
+                                    "equals": [
+                                        "@body('Read_a_resource_for_Fabric_capacity')?['properties']?['state']",
+                                        "Active"
+                                    ]
+                                }
+                            ]
+                        },
+                        "actions": {
+                            "Update_resource_to_scale_up_to_F4": {
+                                "type": "ApiConnection",
+                                "inputs": {
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['arm']['connectionId']"
+                                        }
+                                    },
+                                    "method": "put",
+                                    "body": {
+                                        "sku": {
+                                            "name": "F4"
+                                        },
+                                        "location": "westus3",
+                                        "properties": {
+                                            "administration": {
+                                                "members": "@variables('Admins')"
+                                            }
+                                        }
+                                    },
+                                    "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
+                                    "queries": {
+                                        "x-ms-api-version": "2022-07-01-preview"
+                                    }
+                                }
+                            }
+                        },
+                        "else": {
+                            "actions": {}
+                        }
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Condition_to_check_if_capacity_is_active": {
+                            "type": "If",
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            "@body('Read_a_resource_for_Fabric_capacity')?['properties']?['state']",
+                                            "Active"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "actions": {
+                                "Update_resource_to_scale_down_to_F2": {
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['arm']['connectionId']"
+                                            }
+                                        },
+                                        "method": "put",
+                                        "body": {
+                                            "sku": {
+                                                "name": "F2"
+                                            },
+                                            "location": "westus3",
+                                            "properties": {
+                                                "administration": {
+                                                    "members": "@variables('Admins')"
+                                                }
+                                            }
+                                        },
+                                        "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
+                                        "queries": {
+                                            "x-ms-api-version": "2022-07-01-preview"
+                                        }
+                                    }
+                                }
+                            },
+                            "else": {
+                                "actions": {}
+                            }
+                        }
+                    }
+                },
+                "runAfter": {
+                    "Get_Admins": [
+                        "SUCCEEDED"
+                    ]
+                }
+            },
+            "Current_time_in_UTC": {
+                "type": "Expression",
+                "kind": "CurrentTime",
+                "inputs": {},
+                "runAfter": {}
+            },
+            "Convert_time_zone_to_EST": {
+                "type": "Expression",
+                "kind": "ConvertTimeZone",
+                "inputs": {
+                    "baseTime": "@body('Current_time_in_UTC')",
+                    "sourceTimeZone": "UTC",
+                    "destinationTimeZone": "Eastern Standard Time",
+                    "formatString": "HH:mm:ss"
+                },
+                "runAfter": {
+                    "Current_time_in_UTC": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Read_a_resource_for_Fabric_capacity": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['arm']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
+                    "queries": {
+                        "x-ms-api-version": "2022-07-01-preview"
+                    }
+                },
+                "runAfter": {
+                    "Convert_time_zone_to_EST": [
+                        "Succeeded"
+                    ]
+                }
+            },
+            "Get_Admins": {
+                "type": "InitializeVariable",
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Admins",
+                            "type": "array",
+                            "value": "@body('Read_a_resource_for_Fabric_capacity')?['properties']?['administration']?['members']"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Read_a_resource_for_Fabric_capacity": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "type": "Object",
+            "value": {
+                "arm": {
+                    "id": "/subscriptions/be2486f4-2e46-419b-8ec8-e021a8c74e00/providers/Microsoft.Web/locations/westus3/managedApis/arm",
+                    "connectionId": "/subscriptions/be2486f4-2e46-419b-8ec8-e021a8c74e00/resourceGroups/DemoRG/providers/Microsoft.Web/connections/arm",
+                    "connectionName": "arm"
+                }
+            }
+        }
+    }
+}
