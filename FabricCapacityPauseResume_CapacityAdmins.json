@@ -11,15 +11,14 @@
                     "timeZone": "Eastern Standard Time",
                     "schedule": {
                         "hours": [
-                            6,
-                            22
+                            8,
+                            16
                         ],
                         "minutes": [
                             0
                         ]
                     }
-                },
-                "conditions": []
+                }
             }
         },
         "actions": {
@@ -30,32 +29,32 @@
                         {
                             "greaterOrEquals": [
                                 "@body('Convert_time_zone_to_EST')",
-                                "06:00:00"
+                                "08:00:00"
                             ]
                         },
                         {
                             "lessOrEquals": [
                                 "@body('Convert_time_zone_to_EST')",
-                                "22:00:01"
+                                "16:00:00"
                             ]
                         }
                     ]
                 },
                 "actions": {
-                    "Condition_to_check_if_capacity_is_paused": {
+                    "Condition_to_check_if_capacity_is_active_": {
                         "type": "If",
                         "expression": {
                             "and": [
                                 {
                                     "equals": [
                                         "@body('Read_a_resource_for_Fabric_capacity')?['properties']?['state']",
-                                        "Paused"
+                                        "Active"
                                     ]
                                 }
                             ]
                         },
                         "actions": {
-                            "Invoke_resource_operation_to_resume_Fabric_capacity": {
+                            "Update_resource_to_scale_up_to_F4": {
                                 "type": "ApiConnection",
                                 "inputs": {
                                     "host": {
@@ -63,15 +62,21 @@
                                             "name": "@parameters('$connections')['arm']['connectionId']"
                                         }
                                     },
-                                    "method": "post",
+                                    "method": "put",
                                     "body": {
-                                        "administration": {
-                                            "members": "@variables('Admins')"
+                                        "sku": {
+                                            "name": "F4"
+                                        },
+                                        "location": "westus3",
+                                        "properties": {
+                                            "administration": {
+                                                "members": "@variables('Admins')"
+                                            }
                                         }
                                     },
-                                    "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}/@{encodeURIComponent('Resume')}",
+                                    "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
                                     "queries": {
-                                        "x-ms-api-version": "2022-07-01-preview"
+                                        "x-ms-api-version": "2023-11-01"
                                     }
                                 }
                             }
@@ -96,7 +101,7 @@
                                 ]
                             },
                             "actions": {
-                                "Invoke_resource_operation_to_pause_Fabric_SKU": {
+                                "Update_resource_to_scale_down_to_F2": {
                                     "type": "ApiConnection",
                                     "inputs": {
                                         "host": {
@@ -104,15 +109,21 @@
                                                 "name": "@parameters('$connections')['arm']['connectionId']"
                                             }
                                         },
-                                        "method": "post",
+                                        "method": "put",
                                         "body": {
-                                            "administration": {
-                                                "members": "@variables('Admins')"
+                                            "sku": {
+                                                "name": "F2"
+                                            },
+                                            "location": "westus3",
+                                            "properties": {
+                                                "administration": {
+                                                    "members": "@variables('Admins')"
+                                                }
                                             }
                                         },
-                                        "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}/@{encodeURIComponent('Suspend')}",
+                                        "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
                                         "queries": {
-                                            "x-ms-api-version": "2022-07-01-preview"
+                                            "x-ms-api-version": "2023-11-01"
                                         }
                                     }
                                 }
@@ -161,7 +172,7 @@
                     "method": "get",
                     "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
                     "queries": {
-                        "x-ms-api-version": "2022-07-01-preview"
+                        "x-ms-api-version": "2023-11-01"
                     }
                 },
                 "runAfter": {
