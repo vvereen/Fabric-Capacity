@@ -74,7 +74,7 @@
                                             }
                                         }
                                     },
-                                    "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
+                                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
                                     "queries": {
                                         "x-ms-api-version": "2023-11-01"
                                     }
@@ -121,7 +121,7 @@
                                                 }
                                             }
                                         },
-                                        "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
+                                        "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
                                         "queries": {
                                             "x-ms-api-version": "2023-11-01"
                                         }
@@ -170,7 +170,7 @@
                         }
                     },
                     "method": "get",
-                    "path": "/subscriptions/@{encodeURIComponent('be2486f4-2e46-419b-8ec8-e021a8c74e00')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
+                    "path": "/subscriptions/@{encodeURIComponent('your-subscription-id')}/resourcegroups/@{encodeURIComponent('DemoRG')}/providers/@{encodeURIComponent('Microsoft.Fabric')}/@{encodeURIComponent('capacities/vvereenfabriccapacity')}",
                     "queries": {
                         "x-ms-api-version": "2023-11-01"
                     }
@@ -212,11 +212,12 @@
             "type": "Object",
             "value": {
                 "arm": {
-                    "id": "/subscriptions/be2486f4-2e46-419b-8ec8-e021a8c74e00/providers/Microsoft.Web/locations/westus3/managedApis/arm",
-                    "connectionId": "/subscriptions/be2486f4-2e46-419b-8ec8-e021a8c74e00/resourceGroups/DemoRG/providers/Microsoft.Web/connections/arm",
+                    "id": "/subscriptions/your-subscription-id/providers/Microsoft.Web/locations/westus3/managedApis/arm",
+                    "connectionId": "/subscriptions/your-subscription-id/resourceGroups/DemoRG/providers/Microsoft.Web/connections/arm",
                     "connectionName": "arm"
                 }
             }
         }
     }
 }
+
